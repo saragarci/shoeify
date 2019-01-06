@@ -1,0 +1,18 @@
+{% extends "categories.html" %}
+{% block items %}
+
+	{% for i in items %}
+		{% if item %}
+			{% if i.name == item.name %}
+				<a href="{{url_for('itemDetails', category_id=i.category_id, item_id=i.id)}}" class="item selected">{{i.name}}</a>
+			{% else %}
+				<a href="{{url_for('itemDetails', category_id=i.category_id, item_id=i.id)}}" class="item">{{i.name}}</a>
+			{% endif %}
+		{% else %}
+			<a href="{{url_for('itemDetails', category_id=i.category_id, item_id=i.id)}}" class="item">{{i.name}}</a>
+		{% endif %}
+	{% endfor %}
+
+	<a href = '{{url_for('newCategoryItem', category_id = category.id) }}' class="create_item">Add item</a>
+
+{% endblock %}

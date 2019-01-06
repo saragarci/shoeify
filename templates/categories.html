@@ -1,0 +1,52 @@
+{% extends "main.html" %}
+{% block content %}
+
+	{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		<div class="messages">
+		{% for message in messages %}
+			<p>{{message}}!</p>
+		{% endfor %}
+		</div>
+		{% endif %}
+	{% endwith %}
+
+	<section class="catalog">
+
+	{% if category %}
+		<div class="categories categories_border">
+	{% else %}
+		<div class="categories">
+	{% endif %}
+			<h2 class="categories_title">Categories</h2>
+			{% for c in categories %}
+				{% if category %}
+					{% if category.name == c.name %}
+						<a href="{{url_for('showItems', category_id=c.id)}}" class="category selected">{{c.name}}</a>
+					{% else %}
+						<a href="{{url_for('showItems', category_id=c.id)}}" class="category">{{c.name}}</a>
+					{% endif %}
+				{% else %}
+					<a href="{{url_for('showItems', category_id=c.id)}}" class="category">{{c.name}}</a>
+				{% endif %}
+			{% endfor %}
+		</div>
+		
+		{% if item %}
+			<div class="items items_border">
+		{% else %}
+			<div class="items">
+		{% endif %}
+				{% block items %}
+				{% endblock %}
+			</div>
+
+
+		<div class="item_detail">
+			{% block itemdetail %}
+			{% endblock %}
+		</div>
+
+	</section>
+
+{% endblock %}

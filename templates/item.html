@@ -1,0 +1,9 @@
+{% extends "items.html" %}
+
+{% block itemdetail %}
+	<p class="item_description">{{item.description}}</p>
+	<div class="options">
+		<a href="{{url_for('editCategoryItem', category_id=item.category_id, item_id=item.id)}}" class="icons edit">edit</a> | 
+		<a href="{{url_for('deleteCategoryItem', category_id=item.category_id, item_id=item.id)}}" class="icons delete">delete</a>
+	</div>
+{% endblock %}
