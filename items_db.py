@@ -1,6 +1,7 @@
+#!/usr/bin/env python
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
 from database_setup import Category, Base, CategoryItem, User
 
 engine = create_engine('sqlite:///itemcatalog.db')
@@ -18,10 +19,10 @@ DBSession = sessionmaker(bind=engine)
 # session.rollback()
 session = DBSession()
 
-
 # Create user
 User1 = User(name="Pepito Grillo", email="pepito@grillo.com",
-             picture='https://pbs.twimg.com/profile_images/2671170543/18debd694829ed78203a5a36dd364160_400x400.png')
+             picture="https://pbs.twimg.com/profile_images/2671170543/"
+             "18debd694829ed78203a5a36dd364160_400x400.png")
 session.add(User1)
 session.commit()
 
@@ -80,15 +81,39 @@ session.add(category13)
 session.commit()
 
 # Create items
-item1 = CategoryItem(user_id=1, name="Hamaianas Unisex", description="Brasilian Flip Flops in black color. Perfect for the summer.",
+item1 = CategoryItem(user_id=1, name="Hamaianas Unisex",
+                     description="Brasilian Flip Flops in black color."
+                     " Perfect for the summer.",
                      category=category5)
-item2 = CategoryItem(user_id=1, name="Gladiator strappy wedge sandal", description="Ladies' sandal. Perfect for summer evening dress party.",
+item2 = CategoryItem(user_id=1, name="Gladiator strappy wedge sandal",
+                     description="Ladies' sandal. Perfect for summer evening"
+                     " dress party.",
                      category=category10)
+item3 = CategoryItem(user_id=1, name="Tennis trainers",
+                     description="Adidas Men White & Black Net Nuts Printed"
+                     " Tennis Shoes.",
+                     category=category1)
+item4 = CategoryItem(user_id=1, name="Basketball shoes",
+                     description="First release on 1988, these are the best"
+                     " shoes you will ever find.",
+                     category=category1)
+item5 = CategoryItem(user_id=1, name="Fotball trainers",
+                     description="Top Rated 10 Best Tennis Shoes For Men.",
+                     category=category1)
 
 session.add(item1)
 session.commit()
 
 session.add(item2)
+session.commit()
+
+session.add(item3)
+session.commit()
+
+session.add(item4)
+session.commit()
+
+session.add(item5)
 session.commit()
 
 print "added user, categories and items!"

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask import jsonify, make_response
 from database_setup import Base, Category, CategoryItem, User
@@ -12,8 +14,12 @@ from oauth2client.client import FlowExchangeError
 import httplib2
 import json
 import requests
+import logging
 
 app = Flask(__name__)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
@@ -66,8 +72,6 @@ def gconnect():
     # Obtain authorization code
     code = request.data
 
-    print "hola1"
-
     try:
         # Upgrade the authorization code into a credentials object
         oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
@@ -77,10 +81,7 @@ def gconnect():
         response = make_response(
             json.dumps('Failed to upgrade the authorization code.'), 401)
         response.headers['Content-Type'] = 'application/json'
-        print response
         return response
-
-    print "hola2"
 
     # Check that the access token is valid.
     access_token = credentials.access_token
@@ -107,7 +108,7 @@ def gconnect():
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
-        print "Token's client ID does not match app's."
+        logger.info("Token's client ID does not match app's.")
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -146,9 +147,8 @@ def gconnect():
     output += '!</p>'
     output += '<img src="'
     output += login_session['picture']
-    output += '</div>'
-    flash("You are now logged in as %s" % login_session['username'])
-    print "done!"
+    output += '></div>'
+    logger.info("Done!")
     return output
 
 
@@ -162,6 +162,7 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     token = login_session['access_token']
+    logger.debug('Token: %s', token)
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
@@ -187,7 +188,7 @@ def gdisconnect():
 def disconnect():
     if 'username' in login_session:
         gdisconnect()
-        flash("You have successfully been logged out.")
+        flash("You have successfully been logged out")
         return redirect(url_for('showCategories'))
     else:
         flash("You were not logged in")
@@ -217,13 +218,19 @@ def showItems(category_id):
 # Renders the detail page of an item
 @app.route('/category/<int:category_id>/item/<int:item_id>')
 def itemDetails(category_id, item_id):
+    categories = session.query(Category).all()
+    category = session.query(Category).filter_by(id=category_id).one()
+    items = session.query(CategoryItem).filter_by(
+        category_id=category_id).all()
     item = session.query(CategoryItem).filter_by(id=item_id).one()
     creator = getUserInfo(item.user_id)
     user_id = login_session['user_id']
     if 'username' not in login_session or creator.id != user_id:
-        return render_template('publicitem.html', item=item)
+        return render_template('publicitem.html', category=category,
+                               items=items, categories=categories, item=item)
     else:
-        return render_template('item.html', category=category_id, item=item)
+        return render_template('item.html', category=category,
+                               items=items, categories=categories, item=item)
 
 
 # Renders the page that allows users to create a new item
@@ -240,7 +247,7 @@ def newCategoryItem(category_id):
                                     user_id=login_session['user_id'])
             session.add(new_item)
             session.commit()
-            flash("A new shoe %s has been added to this category." %
+            flash("A new item %s has been added" %
                   new_item.name)
         return redirect(url_for('showItems', category_id=category_id))
     else:
@@ -266,8 +273,9 @@ def editCategoryItem(category_id, item_id):
                 item_to_edit.description = request.form['description']
             session.add(item_to_edit)
             session.commit()
-            flash("The shoe %s has been changed." % item_to_edit.name)
-        return redirect(url_for('showItems', category_id=category_id))
+            flash("The shoe %s has been changed" % item_to_edit.name)
+        return redirect(url_for('itemDetails', category_id=category_id,
+                        item_id=item_to_edit.id))
     else:
         return render_template('editcategoryitem.html',
                                category_id=category_id, item=item_to_edit)
@@ -286,7 +294,7 @@ def deleteCategoryItem(category_id, item_id):
     if request.method == 'POST':
         session.delete(item_to_delete)
         session.commit()
-        flash("The shoe %s has been deleted." % item_to_delete.name)
+        flash("The item %s has been deleted" % item_to_delete.name)
         return redirect(url_for('showItems', category_id=category_id))
     else:
         return render_template('deletecategoryitem.html',
@@ -296,8 +304,11 @@ def deleteCategoryItem(category_id, item_id):
 # Returns the user ID
 def getUserID(email):
     try:
-        user = session.query(User).filter_by(email=email).one()
-        return user.id
+        user = session.query(User).filter_by(email=email).first()
+        if user:
+            return user.id
+        else:
+            return None
     except ImportError:
         return None
 

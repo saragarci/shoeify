@@ -3,26 +3,47 @@
 
 	{% with messages = get_flashed_messages() %}
 		{% if messages %}
-		<ul>
+		<div class="messages">
 		{% for message in messages %}
-			<li><strong> {{message}} </strong></li>
+			<p>{{message}}!</p>
 		{% endfor %}
-		</ul>
+		</div>
 		{% endif %}
 	{% endwith %}
 
-	<h2>Categories</h2>
-
 	<section class="catalog">
 
+	{% if category %}
+		<div class="categories categories_border">
+	{% else %}
 		<div class="categories">
-		{% for c in categories %}
-			<a href="{{url_for('showItems', category_id=c.id)}}" class="category">{{c.name}}</a>
-		{% endfor %}
+	{% endif %}
+			<h2 class="categories_title">Categories</h2>
+			{% for c in categories %}
+				{% if category %}
+					{% if category.name == c.name %}
+						<a href="{{url_for('showItems', category_id=c.id)}}" class="category selected">{{c.name}}</a>
+					{% else %}
+						<a href="{{url_for('showItems', category_id=c.id)}}" class="category">{{c.name}}</a>
+					{% endif %}
+				{% else %}
+					<a href="{{url_for('showItems', category_id=c.id)}}" class="category">{{c.name}}</a>
+				{% endif %}
+			{% endfor %}
 		</div>
+		
+		{% if item %}
+			<div class="items items_border">
+		{% else %}
+			<div class="items">
+		{% endif %}
+				{% block items %}
+				{% endblock %}
+			</div>
 
-		<div class="items">
-			{% block items %}
+
+		<div class="item_detail">
+			{% block itemdetail %}
 			{% endblock %}
 		</div>
 

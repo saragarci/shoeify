@@ -16,7 +16,7 @@
 				{% if 'username' not in session %}
 				<a href="{{url_for('showLogin')}}">Log in</a>
 				{% else %}
-				<a href="{{url_for('gdisconnect')}}">Log out</a>
+				<a href="{{url_for('disconnect')}}">Log out</a>
 				{% endif %}
 			</div>
 			<a href="{{url_for('showCategories')}}" class="title">Shoeify!</a>
@@ -28,8 +28,8 @@
 		</main>
 
 		<footer>
-			<a class="view-source" href="https://github.com/almahex/my-menu" title="View source for this page on GitHub">View source on GitHub</a>
-      		<p>© Copyright 2018 by Sara Garci. All rights reserved.</p>
+			<a class="view-source" href="https://github.com/saragarci/shoeify" title="View source for this page on GitHub">View source on GitHub</a>
+      		<p>© Copyright 2019 by Sara Garci. All rights reserved.</p>
     	</footer>
 
     	{% block scripts %}
