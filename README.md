@@ -11,9 +11,9 @@ In order to log in a google account is necessary as the proccess of authenticati
 
 This application contains an endpoint with three possible GET requests that can be done.
 
-* http://localhost:5000/categories/JSON returns a JSON with all the categories available in the app. Every category contains id and name.
-* http://localhost:5000/category_id/item/JSON returns a JSON with all the shoes available inside a particular category. Note that you must specify the id of the category in the call in order to retrive all the information. For every shoes, name, id and description are given.
-* http://localhost:5000/category_id/item/item_id/JSON returns a JSON with the name, id and description of a pair of shoes. In this request you have to specify both category id in which the item you want to query belongs to, and the id of the item itself. 
+* /categories/JSON returns a JSON with all the categories available in the app. Every category contains id and name.
+* /category_id/item/JSON returns a JSON with all the shoes available inside a particular category. Note that you must specify the id of the category in the call in order to retrive all the information. For every shoes, name, id and description are given.
+* /category_id/item/item_id/JSON returns a JSON with the name, id and description of a pair of shoes. In this request you have to specify both category id in which the item you want to query belongs to, and the id of the item itself. 
 
 ## Usage
 
@@ -43,7 +43,7 @@ In order to see the report, run the following commands:
 
 ### Contributors
 
-* Sara Garci <s@saragarci.com>
+* [Sara Garci](s@saragarci.com)
 
 ## License
 
